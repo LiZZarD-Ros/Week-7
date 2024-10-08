@@ -21,7 +21,7 @@ public class Stage : ScriptableObject
     public Color stageLevelPartColor = Color.white;
     public Color stageBallColor = Color.white;
 
-    public List<Level> level = new List<Level>();
+    public List<Level> levels = new List<Level>();
 
 
 }

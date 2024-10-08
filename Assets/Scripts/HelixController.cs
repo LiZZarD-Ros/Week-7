@@ -21,7 +21,7 @@ public class HelixController : MonoBehaviour
     void Awake()
     {
         startRotation = transform.localEulerAngles;
-        helixDistance = topTransform.localEulerAngles.y - (goalTransform.localPosition.y - 0.1f);
+        helixDistance = topTransform.localPosition.y - (goalTransform.localPosition.y + 0.1f);
         LoadStage(0);
     }
 
@@ -74,10 +74,10 @@ public class HelixController : MonoBehaviour
 
         // create new level / platforms
 
-        float levelDistance = helixDistance / stage.level.Count;
+        float levelDistance = helixDistance / stage.levels.Count;
         float spawnPosY = topTransform.localPosition.y;
 
-        for (int i = 0; i < stage.level.Count; i++)
+        for (int i = 0; i < stage.levels.Count; i++)
         {
             spawnPosY -= levelDistance;
             GameObject level = Instantiate(helixLevelPrefab, transform);
@@ -85,14 +85,52 @@ public class HelixController : MonoBehaviour
             level.transform.localPosition = new Vector3(0, spawnPosY, 0);
             spawnedLevels.Add(level);
 
-            int partsToDiable = 12 - stage.level[i].partCount;
+            //Creating the gaps
+            int partsToDisable = 12 - stage.levels[i].partCount;
             List<GameObject> diasabledParts = new List<GameObject>();
 
-            while (diasabledParts.Count < partsToDiable)
+            while (diasabledParts.Count < partsToDisable)
             {
                 GameObject randomPart = level.transform.GetChild(Random.Range(0, level.transform.childCount)).gameObject;
+                if (!diasabledParts.Contains(randomPart))
+                {
+                    randomPart.SetActive(false);
+                    diasabledParts.Add(randomPart);
+                }
             }
+        
+        List<GameObject> leftParts = new List<GameObject>();
+
+            foreach (Transform t in level.transform)
+            {
+                t.GetComponent<Renderer>().material.color = allStages[stageNumber].stageLevelPartColor;
+                if (t.gameObject.activeInHierarchy)
+                {
+                    leftParts.Add(t.gameObject);
+                }
+            }
+
+            //Creating death parts
+            List<GameObject> deathParts = new List<GameObject>();
+
+            while(deathParts.Count < stage.levels[i].deathPartCount)
+            {
+                GameObject randomPart = leftParts[(Random.Range(0, leftParts.Count))];
+                if (!deathParts.Contains(randomPart))
+                {
+                    randomPart.gameObject.AddComponent<DeathPart>();
+                    deathParts.Add(randomPart);
+                }
+            }
+
+
+
         }
+
+
+
+
+
     }
 
 

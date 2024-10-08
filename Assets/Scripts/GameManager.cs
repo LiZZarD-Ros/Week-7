@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Advertisements;
 using UnityEngine;
+using UnityEngine.Advertisements;
 
 public class GameManager : MonoBehaviour
 {
@@ -14,6 +16,7 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
+        Advertisement.Initialize("5709913");
         if (singleton == null)
         {
             singleton = this;
@@ -27,6 +30,9 @@ public class GameManager : MonoBehaviour
 
    public void NextLevel()
     {
+        currentStage++;
+        FindObjectOfType<BallController>().ResetBall();
+        FindObjectOfType<HelixController>().LoadStage(currentStage);
         Debug.Log("Next Level start");
 
     }
@@ -34,10 +40,12 @@ public class GameManager : MonoBehaviour
     public void RestartLevel()
     {
         Debug.Log("Game Over");
-        // show ads
+        Advertisement.Show();
+        5709913
+
         singleton.score = 0;
         FindObjectOfType<BallController>().ResetBall();
-        // Reload stage
+        FindObjectOfType<HelixController>().LoadStage(currentStage);
     }
 
     public void AddScore(int scoreToAdd)
