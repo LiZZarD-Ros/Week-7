@@ -27,12 +27,17 @@ public class GameManager : MonoBehaviour
 
    public void NextLevel()
     {
+        Debug.Log("Next Level start");
 
     }
 
     public void RestartLevel()
     {
-
+        Debug.Log("Game Over");
+        // show ads
+        singleton.score = 0;
+        FindObjectOfType<BallController>().ResetBall();
+        // Reload stage
     }
 
     public void AddScore(int scoreToAdd)
