@@ -1,8 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.Advertisements;
 using UnityEngine;
 using UnityEngine.Advertisements;
+using TMPro;
 
 public class GameManager : MonoBehaviour
 {
@@ -12,11 +12,13 @@ public class GameManager : MonoBehaviour
     public int currentStage = 0;
 
     public static GameManager singleton;
-    
+
+    [SerializeField] private TextMeshProUGUI scoreBest;
+
     // Start is called before the first frame update
     void Awake()
     {
-        Advertisement.Initialize("5709913");
+        //Advertisement.Initialize("5709913");
         if (singleton == null)
         {
             singleton = this;
@@ -26,6 +28,11 @@ public class GameManager : MonoBehaviour
         }
 
         bestScore = PlayerPrefs.GetInt("Highscore");
+
+        //Managing Ads
+       
+        StartCoroutine(DisplayBannerWithDelay());
+
     }
 
    public void NextLevel()
@@ -40,8 +47,9 @@ public class GameManager : MonoBehaviour
     public void RestartLevel()
     {
         Debug.Log("Game Over");
-        Advertisement.Show();
-        5709913
+        //Advertisement.Show("5709913");
+        //5709913
+        AdsManager.Instance.interstitialAds.ShowInterstitialAd();
 
         singleton.score = 0;
         FindObjectOfType<BallController>().ResetBall();
@@ -56,6 +64,19 @@ public class GameManager : MonoBehaviour
         {
             bestScore = score;
             PlayerPrefs.SetInt("Highscore", score);
+            
         }
     }
+
+    private IEnumerator DisplayBannerWithDelay()
+    {
+        yield return new WaitForSeconds(1f);
+        AdsManager.Instance.bannerAds.ShowBannerAd();
+    }
+
+    private void Update()
+    {
+        scoreBest.text = bestScore.ToString();
+    }
+
 }

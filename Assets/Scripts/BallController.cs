@@ -11,12 +11,17 @@ public class BallController : MonoBehaviour
 
     public int perfectPass = 0;
     public bool isSuperSpeedActive;
-    
-    
+
+    public AudioClip swooshSound;
+    public AudioClip hitSound;
+    private AudioSource playerAudio;
+
+
     // Start is called before the first frame update
     void Awake()
     {
         startPos = transform.position;
+        playerAudio = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -26,6 +31,7 @@ public class BallController : MonoBehaviour
         {
             isSuperSpeedActive = true;
             rb.AddForce(Vector3.down * 10, ForceMode.Impulse);
+            playerAudio.PlayOneShot(swooshSound);
         }
     }
 
@@ -38,7 +44,7 @@ public class BallController : MonoBehaviour
         {
             if (!collision.transform.GetComponent<Goal>())
             {
-                Destroy(collision.transform.parent.gameObject);
+                Destroy(collision.transform.parent.gameObject, 0.3f);
                 Debug.Log("Destroying platform");
             }
         }
@@ -53,12 +59,15 @@ public class BallController : MonoBehaviour
 
         rb.velocity = Vector3.zero;
         rb.AddForce(Vector3.up * impulseForce, ForceMode.Impulse);
+        rb.AddTorque(Vector3.right, ForceMode.Impulse);
 
         ignoreNextCollision = true;
         Invoke("AllowCollision", .2f);
         
         perfectPass = 0;
         isSuperSpeedActive = false;
+
+        playerAudio.PlayOneShot(hitSound);
     }
 
     private void AllowCollision()
